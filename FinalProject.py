@@ -79,6 +79,7 @@ class GenreClassifier:
 	def getClassificationMetalInput(self):
 		metalFiles = []		
 		dataList = []
+		first = 1
 		for i in range(25,30):
 			currName = "metal specs/metal.000"
 			currName = currName + str(i)
@@ -94,15 +95,23 @@ class GenreClassifier:
 
 			for i in range(array.shape[0]):
 				labeledArray.append(np.append(array[i], 1))
-
+			
 			labeledArray = np.array(labeledArray)
-			dataList.append(labeledArray)
+			
+			if(first == 1):
+				dataList = labeledArray
+				first = 0
+				dataList = np.array(dataList)
+			else :
+				dataList = np.array(dataList)
+				dataList = np.concatenate((dataList, labeledArray), axis = 0)
 
 		return dataList
 
 	def getClassificationClassicalInput(self):
 		classicalFiles = []		
 		dataList = []
+		first = 1
 		for i in range(25,30):
 			currName = "classical specs/classical.000"
 			currName = currName + str(i)
@@ -119,8 +128,13 @@ class GenreClassifier:
 			for i in range(array.shape[0]):
 				labeledArray.append(np.append(array[i], 0))
 
+
 			labeledArray = np.array(labeledArray)
-			dataList.append(labeledArray)
+			if(first == 1):
+				dataList = labeledArray
+				first = 0
+			else :
+				dataList = np.concatenate((dataList, labeledArray), axis = 0)
 
 		return dataList
 
@@ -477,15 +491,13 @@ class GenreClassifier:
 		incorrectlyClassified = 0
 		total = len(inputs)
 		firingRates = []
-
+		input = inputs
 		for x in range(len(inputs)):
-			input = inputs[x]
 			currGenre = input[x][138]
 			for k in range(len(self.inputLayer)):
 				neuron = self.inputLayer[k]
 				currSpikeRate = 0
-				for i in range(len(input)):
-					currSpikeRate += neuron.runNeuron(input[i][k]*5+7.9)
+				currSpikeRate += neuron.runNeuron(input[x][k]*65.0)
 				neuron.classificationRate = currSpikeRate
 
 			for i in range(len(self.inputLayer)):
@@ -498,11 +510,11 @@ class GenreClassifier:
 			for k in range(len(self.middleLayer[0])):
 				neuron = self.middleLayer[0][k]
 				currSpikeRate = 0
-				multiplier = 0.7
+				multiplier = 1.2
 				if(self.inputLayer[k].classificationActivity == 0):
 					multiplier = 0.8
 				for i in range(len(self.middleLayer[0][k].weights)):
-					currSpikeRate += neuron.runNeuron(multiplier*neuron.weights[k]*self.inputLayer[k].classificationRate*2.0)
+					currSpikeRate += neuron.runNeuron(multiplier*neuron.weights[k]*self.inputLayer[k].classificationRate*1.5)
 				neuron.classificationRate = currSpikeRate
 				# print("Layer 1: ", currSpikeRate)
 
@@ -515,11 +527,11 @@ class GenreClassifier:
 			for k in range(len(self.middleLayer[1])):
 				neuron = self.middleLayer[1][k]
 				currSpikeRate = 0
-				multiplier = 0.9
+				multiplier = 1.5
 				for i in range(len(self.middleLayer[1][k].weights)):
-					if(self.middleLayer[0][i].classificationActivity == 0 or input[0][138] == 0):
-						multiplier = 0.5
-					currSpikeRate += neuron.runNeuron(multiplier*neuron.weights[i]*self.middleLayer[0][i].classificationRate*1.9)
+					if(self.middleLayer[0][i].classificationActivity == 0 or input[x][138] == 0):
+						multiplier = 0.8
+					currSpikeRate += neuron.runNeuron(multiplier*neuron.weights[i]*self.middleLayer[0][i].classificationRate*1.6)
 				neuron.classificationRate = currSpikeRate
 				# print("Layer 2: ", currSpikeRate)
 
@@ -534,11 +546,11 @@ class GenreClassifier:
 			for k in range(len(self.middleLayer[2])):
 				neuron = self.middleLayer[2][k]
 				currSpikeRate = 0
-				multiplier = 0.7
+				multiplier = 1.1
 				for i in range(len(self.middleLayer[1][k].weights)):
-					if(self.middleLayer[1][i].classificationActivity == 0 or input[0][138] == 0):
-						multiplier = 0.5
-					currSpikeRate += neuron.runNeuron(multiplier*neuron.weights[i]*self.middleLayer[1][i].classificationRate*2.1)
+					if(self.middleLayer[1][i].classificationActivity == 0 or input[x][138] == 0):
+						multiplier = 0.8
+					currSpikeRate += neuron.runNeuron(multiplier*neuron.weights[i]*self.middleLayer[1][i].classificationRate*1.5)
 				neuron.classificationRate = currSpikeRate
 				# print("Layer 3: ", currSpikeRate)
 
@@ -551,14 +563,22 @@ class GenreClassifier:
 			#output layer
 			outputSpikingRate = 0
 			currSpikeRate = 0
-			multiplier = 0.7
+			multiplier = 1.1
 			for i in range(len(self.middleLayer[2])):
-				if(self.middleLayer[2][i].classificationActivity == 0  or input[0][138] == 0):
-					multiplier = 0.75
-				currSpikeRate += self.outputLayer.runNeuron(multiplier*self.outputLayer.weights[i]*self.middleLayer[2][i].classificationRate*1.7)
+				if(self.middleLayer[2][i].classificationActivity == 0  or input[x][138] == 0):
+					multiplier = 0.8
+				currSpikeRate += self.outputLayer.runNeuron(multiplier*self.outputLayer.weights[i]*self.middleLayer[2][i].classificationRate*0.7)
 			outputSpikingRate = currSpikeRate
 
 			print("Ouput firing rate: ",outputSpikingRate," for genre ", currGenre)
+			if(outputSpikingRate >= 0.6 and currGenre == 1):
+				correctlyClassified += 1
+			elif(outputSpikingRate < 0.2 and currGenre == 0):
+				correctlyClassified += 1
+			else:
+				incorrectlyClassified += 1
+		print("Correctly Classified: ", correctlyClassified)
+		print("IncorrectlyClassified: ", incorrectlyClassified)
 
 	def round(input):
 		return math.ceil(input*100000)/100000
