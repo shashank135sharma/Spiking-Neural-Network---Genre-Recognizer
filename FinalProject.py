@@ -52,7 +52,7 @@ class GenreClassifier:
 			currName += ".au.wav.csv"
 			self.metalFiles.append(currName)
 
-		# for i in range(10,100):
+		# for i in range(10,30):
 		# 	currName = "metal specs/metal.000"
 		# 	currName += str(i)
 		# 	currName += ".au.wav.csv"
@@ -61,7 +61,7 @@ class GenreClassifier:
 		for j in range(5):
 			array = np.genfromtxt(self.metalFiles[j], delimiter=',')
 			array = np.transpose(array)
-			array = array[0:100,:]
+			array = array[0:250,:]
 
 			labeledArray = []
 
@@ -79,7 +79,7 @@ class GenreClassifier:
 	def getClassificationMetalInput(self):
 		metalFiles = []		
 		dataList = []
-		for i in range(10,15):
+		for i in range(25,30):
 			currName = "metal specs/metal.000"
 			currName = currName + str(i)
 			currName += ".au.wav.csv"
@@ -103,7 +103,7 @@ class GenreClassifier:
 	def getClassificationClassicalInput(self):
 		classicalFiles = []		
 		dataList = []
-		for i in range(10,15):
+		for i in range(25,30):
 			currName = "classical specs/classical.000"
 			currName = currName + str(i)
 			currName += ".au.wav.csv"
@@ -133,7 +133,7 @@ class GenreClassifier:
 			currName += ".au.wav.csv"
 			self.classicalFiles.append(currName)
 
-		# for i in range(10,100):
+		# for i in range(10,30):
 		# 	currName = "classical specs/classical.000"
 		# 	currName += str(i)
 		# 	currName += ".au.wav.csv"
@@ -142,7 +142,7 @@ class GenreClassifier:
 		for j in range(5):
 			array = np.genfromtxt(self.classicalFiles[j], delimiter=',')
 			array = np.transpose(array)
-			array = array[0:100,:]
+			array = array[0:250,:]
 
 			labeledArray = []
 
@@ -182,16 +182,16 @@ class GenreClassifier:
 					numDecreased += 1
 
 			if(neuron.numFired > neuron.notFired):
-				print("Fired! ")
+				# print("Fired! ")
 				numFired+=1
 				neuron.fired = 1
 			else:
-				print("Not Fired for input: ", )
+				# print("Not Fired for input: ", )
 				numNotFired += 1							#Store current spike rate in array for training next
-		print(neuron.weights,"\nNum fired: ",numFired, " Num not fired:  ", numNotFired)
-		print("Average Spike Rate: ", avgSpikeRate, " ", avgSpikeRate/len(input))
+		# print(neuron.weights,"\nNum fired: ",numFired, " Num not fired:  ", numNotFired)
+		# print("Average Spike Rate: ", avgSpikeRate, " ", avgSpikeRate/len(input))
 		
-		print("\n\n\n\n\n")
+		print("Training layer 1...\n\n")
 
 		for k in range(len(self.middleLayer[0])):
 			neuron = self.middleLayer[0][k]
@@ -209,7 +209,7 @@ class GenreClassifier:
 						multiplier *= 0.7
 					currentSpikeRate += neuron.runNeuron(multiplier*(self.inputLayer[j].spikeRateForData[i])*neuron.weights[j]*2.2)
 					neuron.spikeRateForData.append(currentSpikeRate)									#Store current spike rate in array for training next
-				print("Curr spike rate: ", currentSpikeRate)
+				# print("Curr spike rate: ", currentSpikeRate)
 				for j in range(len(input[0])-1):
 					if(currentSpikeRate >= self.spikingThreshold and self.inputLayer[j].fired == 1):					#If both fire, increase weight
 						currWeight = neuron.weights[j]
@@ -235,13 +235,13 @@ class GenreClassifier:
 						numDecreased += 1
 				if(neuron.numFired > neuron.notFired):
 					neuron.fired = 1
-					print("Fired numFired:", neuron.numFired, " notFired: ", neuron.notFired)
+					# print("Fired numFired:", neuron.numFired, " notFired: ", neuron.notFired)
 				neuron.spikeRateForData.append(currentSpikeRate)									#Store current spike rate in array for training next
 				# print(i,"\nNum increased: ",numIncreased, " Num Decreased:  ", numDecreased)
 				# for j in range(len(input[0])):
-			print(neuron.weights,"\nNum increased: ",numIncreased, " Num Decreased:  ", numDecreased, " for input ")
+			# print(neuron.weights,"\nNum increased: ",numIncreased, " Num Decreased:  ", numDecreased, " for input ")
 			neuron.totalSpikeRate = totalSpikeRate/4
-		print("\n\n\n\n\n")
+		print("Training layer 2...\n\n")
 		for k in range(len(self.middleLayer[1])):
 			neuron = self.middleLayer[1][k]
 			currentSpikeRate = 0
@@ -283,13 +283,13 @@ class GenreClassifier:
 						numDecreased += 1
 				if(neuron.numFired > neuron.notFired):
 					neuron.fired = 1
-					print("Fired numFired:", neuron.numFired, " notFired: ", neuron.notFired)
+					# print("Fired numFired:", neuron.numFired, " notFired: ", neuron.notFired)
 				neuron.spikeRateForData.append(currentSpikeRate)									#Store current spike rate in array for training next
 				# print(i,"\nNum increased: ",numIncreased, " Num Decreased:  ", numDecreased)
 				# for j in range(len(input[0])):
 			# print(neuron.weights,"\nNum increased: ",numIncreased, " Num Decreased:  ", numDecreased, " for input ")
 			neuron.totalSpikeRate = totalSpikeRate/4
-		print("\n\n\n\n\n")
+		print("Training layer 3...\n\n")
 		for k in range(len(self.middleLayer[2])):
 			neuron = self.middleLayer[2][k]
 			currentSpikeRate = 0
@@ -331,14 +331,14 @@ class GenreClassifier:
 						numDecreased += 1
 				if(neuron.numFired > neuron.notFired):
 					neuron.fired = 1
-					print("Fired numFired:", neuron.numFired, " notFired: ", neuron.notFired)
+					# print("Fired numFired:", neuron.numFired, " notFired: ", neuron.notFired)
 				neuron.spikeRateForData.append(currentSpikeRate)									#Store current spike rate in array for training next
 				# print(i,"\nNum increased: ",numIncreased, " Num Decreased:  ", numDecreased)
 				# for j in range(len(input[0])):
 			# print(neuron.weights,"\nNum increased: ",numIncreased, " Num Decreased:  ", numDecreased, " for input ")
 			neuron.totalSpikeRate = totalSpikeRate/4
 			# print("\n",totalSpikeRate/4,"\n")
-
+		print("Training output neuron...\n\n")
 		self.trainExcitatoryNeurons(input)
 		self.trainInhibitoryNeurons(input)
 
@@ -352,7 +352,7 @@ class GenreClassifier:
 
 		layer1 = np.array(layer1)
 
-		np.savetxt('layer1.csv', layer1, delimiter=",")
+		np.savetxt('layer13.csv', layer1, delimiter=",")
 
 		layer2 = []
 		for i in range(len(self.middleLayer[1])):
@@ -362,7 +362,7 @@ class GenreClassifier:
 			layer2.append(currArray)
 		
 		layer2 = np.array(layer2)
-		np.savetxt('layer2.csv', layer2, delimiter=",")
+		np.savetxt('layer23.csv', layer2, delimiter=",")
 
 		layer3 = []
 		for i in range(len(self.middleLayer[2])):
@@ -372,14 +372,14 @@ class GenreClassifier:
 			layer3.append(currArray)
 
 		layer3 = np.array(layer3)
-		np.savetxt('layer3.csv', layer3, delimiter=",")
+		np.savetxt('layer33.csv', layer3, delimiter=",")
 
 		outputLayer = []
 		for i in range(len(self.outputLayer.weights)):
 			outputLayer.append(self.outputLayer.weights[i])
 
 		outputLayer = np.array(outputLayer)		
-		np.savetxt('outputLayer.csv', outputLayer, delimiter=",")
+		np.savetxt('outputLayer3.csv', outputLayer, delimiter=",")
 
 	def getWeights(self):
 		layer1 = genfromtxt('layer1.csv', delimiter=',')
@@ -439,7 +439,7 @@ class GenreClassifier:
 					else:
 						neuron.weights[j] = -1.000
 					# print("decreased weight from ", currWeight, " to ", self.outputLayer.weights[k], " with delta ", round(deltaW), " for input ", input[i], " ")
-				print("Weight for excitatory output ", input[i][138], " = ", self.outputLayer.weights)
+				# print("Weight for excitatory output ", input[i][138], " = ", self.outputLayer.weights)
 
 	def trainInhibitoryNeurons(self, input):
 		for k in range(int(math.floor(len(self.outputLayer.weights)/2)), self.hiddenLayerNum):
@@ -470,7 +470,7 @@ class GenreClassifier:
 					else:
 						self.outputLayer.weights[k] = 1.000
 					# print("increased weight from ", currWeight, " to ", self.outputLayer.weights[k], " with delta ", round(deltaW), " for input ", input[i], " ")
-				print("Weight for inhibitory output ", input[i][138], " = ", self.outputLayer.weights)
+				# print("Weight for inhibitory output ", input[i][138], " = ", self.outputLayer.weights)
 
 	def classify(self, inputs):
 		correctlyClassified = 0
@@ -500,9 +500,9 @@ class GenreClassifier:
 				currSpikeRate = 0
 				multiplier = 0.7
 				if(self.inputLayer[k].classificationActivity == 0):
-					multiplier = 0.5
+					multiplier = 0.8
 				for i in range(len(self.middleLayer[0][k].weights)):
-					currSpikeRate += neuron.runNeuron(multiplier*neuron.weights[k]*self.inputLayer[k].classificationRate*1.7)
+					currSpikeRate += neuron.runNeuron(multiplier*neuron.weights[k]*self.inputLayer[k].classificationRate*2.0)
 				neuron.classificationRate = currSpikeRate
 				# print("Layer 1: ", currSpikeRate)
 
@@ -515,11 +515,11 @@ class GenreClassifier:
 			for k in range(len(self.middleLayer[1])):
 				neuron = self.middleLayer[1][k]
 				currSpikeRate = 0
-				multiplier = 0.7
+				multiplier = 0.9
 				for i in range(len(self.middleLayer[1][k].weights)):
 					if(self.middleLayer[0][i].classificationActivity == 0 or input[0][138] == 0):
 						multiplier = 0.5
-					currSpikeRate += neuron.runNeuron(multiplier*neuron.weights[i]*self.middleLayer[0][i].classificationRate*1.7)
+					currSpikeRate += neuron.runNeuron(multiplier*neuron.weights[i]*self.middleLayer[0][i].classificationRate*1.9)
 				neuron.classificationRate = currSpikeRate
 				# print("Layer 2: ", currSpikeRate)
 
@@ -538,7 +538,7 @@ class GenreClassifier:
 				for i in range(len(self.middleLayer[1][k].weights)):
 					if(self.middleLayer[1][i].classificationActivity == 0 or input[0][138] == 0):
 						multiplier = 0.5
-					currSpikeRate += neuron.runNeuron(multiplier*neuron.weights[i]*self.middleLayer[1][i].classificationRate*1.7)
+					currSpikeRate += neuron.runNeuron(multiplier*neuron.weights[i]*self.middleLayer[1][i].classificationRate*2.1)
 				neuron.classificationRate = currSpikeRate
 				# print("Layer 3: ", currSpikeRate)
 
@@ -554,7 +554,7 @@ class GenreClassifier:
 			multiplier = 0.7
 			for i in range(len(self.middleLayer[2])):
 				if(self.middleLayer[2][i].classificationActivity == 0  or input[0][138] == 0):
-					multiplier = 0.5
+					multiplier = 0.75
 				currSpikeRate += self.outputLayer.runNeuron(multiplier*self.outputLayer.weights[i]*self.middleLayer[2][i].classificationRate*1.7)
 			outputSpikingRate = currSpikeRate
 
@@ -573,7 +573,7 @@ np.random.shuffle(test.dataList)
 # test.dataList = np.genfromtxt("global.csv", delimiter=',')
 print(test.dataList, "\nShape: ", test.dataList.shape)
 # test.train()
-test.saveWeights()
+# test.saveWeights()
 test.getWeights()
 test.isFirst = 0
 classificationInput = np.concatenate((test.getClassificationMetalInput(), test.getClassificationClassicalInput()),axis=0)
